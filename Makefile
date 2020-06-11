@@ -12,6 +12,9 @@ UNAME_S = $(shell uname -s)
 # 1988 which is too old (defined in sys/cdefs.h)
 CFLAGS += -D_POSIX_C_SOURCE=199506L
 
+# For htstress compiling usage
+CFLAGS_user = -std=gnu99 -Wall -Wextra -Werror
+LDFLAGS_user = -lpthread
 
 OUT = bin
 EXEC = $(OUT)/facebooc
@@ -39,10 +42,13 @@ $(EXEC): $(OBJS)
 	mkdir -p $(OUT)
 	$(CC) $(OBJS) -o $@ $(LDFLAGS)
 
-all: $(EXEC)
+all: $(EXEC) htstress
 run: $(EXEC)
 	@echo "Starting Facebooc service..."
 	@./$(EXEC) $(port)
+
+htstress: htstress.c
+	$(CC) $(CFLAGS_user) -o $@ $< $(LDFLAGS_user)
 
 clean:
 	$(RM) $(OBJS) $(EXEC) $(deps)
